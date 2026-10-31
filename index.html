@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BUGrock Launcher — Cyber Glitch Terminal Edition</title>
+  <meta name="description" content="Brutalist modder terminal and runtime for Minecraft Bedrock Edition." />
+  <link rel="icon" type="image/x-icon" href="./assets/app_icon.ico" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    @font-face {
+      font-family: 'MinecraftTen';
+      src: url('./fonts/MinecraftTen.ttf') format('truetype');
+      font-weight: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('./fonts/Minecraft.ttf') format('truetype');
+      font-weight: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #050608;
+      --card: #0D0F14;
+      --border: #222634;
+      --border-bright: #3D445D;
+      --lime: #86FF00;
+      --magenta: #FF00E5;
+      --text: #F8FAFC;
+      --muted: #94A3B8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border-radius: 0 !important; /* Pure Brutalist Sharpness */
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Concept Switcher Ribbon */
+    .concept-ribbon {
+      background: #000000;
+      border-bottom: 2px solid var(--border);
+      padding: 8px 16px;
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .concept-ribbon .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+    }
+    .concept-ribbon .pulse {
+      width: 7px;
+      height: 7px;
+      background-color: var(--magenta);
+      display: inline-block;
+    }
+    .concept-ribbon .pills {
+      display: flex;
+      gap: 8px;
+    }
+    .concept-ribbon a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 3px 10px;
+      border: 1px solid var(--border);
+      transition: all 0.15s ease;
+    }
+    .concept-ribbon a:hover {
+      color: #fff;
+      border-color: var(--border-bright);
+    }
+    .concept-ribbon a.active {
+      background: #190F1B;
+      color: var(--magenta);
+      border-color: var(--magenta);
+      font-weight: 700;
+    }
+
+    /* Live Telemetry Ticker */
+    .ticker-bar {
+      background: #090B10;
+      border-bottom: 1px solid var(--border);
+      padding: 6px 16px;
+      font-size: 11px;
+      color: var(--lime);
+      display: flex;
+      justify-content: space-between;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* Header */
+    header.brutal-nav {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-cube-frame {
+      width: 44px;
+      height: 44px;
+      background: #000;
+      border: 2px solid var(--lime);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 4px 4px 0 #000;
+    }
+    .brand-cube-frame img {
+      width: 32px;
+      height: 32px;
+      image-rendering: pixelated;
+    }
+    .brand-text {
+      font-family: 'MinecraftTen', sans-serif;
+      font-size: 24px;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+    .brand-text span {
+      color: var(--magenta);
+    }
+    .header-tag {
+      font-size: 11px;
+      background: #141722;
+      border: 1px solid var(--border-bright);
+      padding: 4px 10px;
+      color: var(--muted);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero Section */
+    .hero-split {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 32px;
+      padding: 48px 0;
+      border-bottom: 2px solid var(--border);
+    }
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .status-pill {
+      display: inline-block;
+      font-size: 11px;
+      color: var(--lime);
+      background: #0E160C;
+      border: 1px solid #1E3B18;
+      padding: 4px 12px;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+    .hero-h1 {
+      font-family: 'MinecraftTen', sans-serif;
+      font-size: clamp(34px, 4.8vw, 56px);
+      line-height: 1.05;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+    .hero-h1 span.glitch {
+      color: var(--lime);
+      background: #0B1A07;
+      padding: 0 6px;
+    }
+    .hero-p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 28px;
+      max-width: 580px;
+    }
+
+    /* Quick Install Script Box */
+    .script-box {
+      background: #000;
+      border: 2px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .script-code {
+      color: var(--lime);
+      font-size: 13px;
+    }
+    .btn-copy {
+      background: #1A1F2C;
+      border: 1px solid var(--border-bright);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    .btn-copy:hover {
+      background: #283044;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-brutal-primary {
+      background: var(--lime);
+      color: #000;
+      font-family: 'MinecraftTen', sans-serif;
+      font-size: 16px;
+      padding: 14px 28px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 2px solid #000;
+      box-shadow: 6px 6px 0 var(--magenta);
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .btn-brutal-primary:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0 var(--magenta);
+    }
+    .btn-brutal-secondary {
+      background: var(--card);
+      border: 2px solid var(--border);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 14px 22px;
+      text-decoration: none;
+      box-shadow: 4px 4px 0 #000;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-brutal-secondary:hover {
+      border-color: var(--border-bright);
+    }
+
+    /* Right Terminal Simulator */
+    .terminal-window {
+      background: #000;
+      border: 2px solid var(--border);
+      box-shadow: 8px 8px 0 #0D0F14;
+      display: flex;
+      flex-direction: column;
+      height: 440px;
+    }
+    .term-header {
+      background: #11141D;
+      border-bottom: 2px solid var(--border);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .term-screen {
+      padding: 16px;
+      flex: 1;
+      overflow-y: auto;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .term-line {
+      margin-bottom: 8px;
+    }
+    .term-prompt {
+      color: var(--lime);
+    }
+    .term-output {
+      color: #CBD5E1;
+      white-space: pre-wrap;
+    }
+    .term-output.pink {
+      color: var(--magenta);
+    }
+    .term-input-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      background: #090A0E;
+    }
+    .term-input-row input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      width: 100%;
+      outline: none;
+      padding-left: 8px;
+    }
+    .quick-chips {
+      padding: 8px 14px;
+      background: #090B10;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .chip-cmd {
+      background: #141722;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 10px;
+      padding: 3px 8px;
+      cursor: pointer;
+    }
+    .chip-cmd:hover {
+      color: var(--lime);
+      border-color: var(--lime);
+    }
+
+    /* Diagnostics Bento Grid */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding: 48px 0;
+      border-bottom: 2px solid var(--border);
+    }
+    .bento-item {
+      background: var(--card);
+      border: 2px solid var(--border);
+      padding: 24px;
+      box-shadow: 4px 4px 0 #000;
+    }
+    .bento-num {
+      font-family: 'MinecraftTen', sans-serif;
+      font-size: 28px;
+      color: var(--lime);
+      margin-bottom: 8px;
+    }
+    .bento-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .bento-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Live Benchmarks Section */
+    .benchmarks-section {
+      padding: 48px 0;
+    }
+    .section-head {
+      margin-bottom: 32px;
+    }
+    .head-tag {
+      font-size: 11px;
+      color: var(--magenta);
+      margin-bottom: 6px;
+    }
+    .head-title {
+      font-family: 'MinecraftTen', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-bars-container {
+      background: var(--card);
+      border: 2px solid var(--border);
+      padding: 32px;
+      box-shadow: 6px 6px 0 #000;
+    }
+    .stat-bar-group {
+      margin-bottom: 24px;
+    }
+    .stat-bar-group:last-child {
+      margin-bottom: 0;
+    }
+    .stat-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .stat-track {
+      height: 24px;
+      background: #000;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .stat-fill-lime {
+      height: 100%;
+      background: var(--lime);
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      color: #000;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .stat-fill-red {
+      height: 100%;
+      background: #EF4444;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Footer */
+    footer.brutal-footer {
+      border-top: 2px solid var(--border);
+      padding: 36px 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-split {
+        grid-template-columns: 1fr;
+      }
+      .bento-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 600px) {
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Switcher Ribbon across all 3 concepts -->
+  <div class="concept-ribbon">
+    <div class="badge">
+      <span class="pulse"></span>
+      <span>BUGrock Launcher Labs</span>
+    </div>
+    <div class="pills">
+      <a href="https://bugrocklauncher.github.io/bugrock-v1/">01. Studio Minimalist</a>
+      <a href="https://bugrocklauncher.github.io/bugrock-v2/">02. Bedrock Game OS</a>
+      <a href="https://bugrocklauncher.github.io/bugrock-v3/" class="active">03. Cyber Glitch</a>
+    </div>
+  </div>
+
+  <!-- Telemetry Ticker -->
+  <div class="ticker-bar">
+    <span>[SYS_DIAGNOSTICS] :: PROTOCOL 686 READY</span>
+    <span>STORE LOCK: BYPASS ENFORCED</span>
+    <span>ISOLATED SUB-SANDBOXES: ACTIVE</span>
+    <span>DISCORD RPC: LIVE</span>
+  </div>
+
+  <!-- Header -->
+  <header class="brutal-nav">
+    <div class="brand-group">
+      <div class="brand-cube-frame">
+        <img src="./assets/bugrock_block.png" alt="Glitch Cube" />
+      </div>
+      <div class="brand-text">BUGrock <span>// TERMINAL</span></div>
+    </div>
+    <div class="header-tag">
+      v2.4.1-STABLE-x64
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="container">
+    <section class="hero-split">
+      <div class="hero-left">
+        <div class="status-pill">
+          [●] NO MS-STORE REQUIRED • PORTABLE USB READY
+        </div>
+        <h1 class="hero-h1">
+          BREAK THE STORE LOCK. OWN YOUR <span class="glitch">BEDROCK</span>.
+        </h1>
+        <p class="hero-p">
+          A high-performance command & runtime environment for Windows 10 & 11. Run releases, betapackages, and RenderDragon shaders concurrently without touching root system files.
+        </p>
+
+        <!-- Script box -->
+        <div class="script-box">
+          <span class="script-code" id="cmd-script">irm https://bugrock.sh/install | iex</span>
+          <button class="btn-copy" id="copy-script-btn">COPY CMD</button>
+        </div>
+
+        <div class="hero-actions">
+          <a href="https://github.com/BUGrockLauncher/bugrocklauncher.github.io/releases/latest" class="btn-brutal-primary">
+            DOWNLOAD BINARIES (x64)
+          </a>
+          <a href="#benchmarks" class="btn-brutal-secondary">
+            EMPIRICAL DATA ↓
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Interactive CLI Terminal -->
+      <div>
+        <div class="terminal-window">
+          <div class="term-header">
+            <span>TERMINAL // bugrock-shell (tty0)</span>
+            <span style="color: var(--lime);">ONLINE</span>
+          </div>
+
+          <div class="term-screen" id="term-screen">
+            <div class="term-line">
+              <span class="term-prompt">$</span> bugrock --version
+            </div>
+            <div class="term-output">BUGrock Bedrock Launcher v2.4.1 (x86_64-pc-windows-msvc)</div>
+
+            <div class="term-line" style="margin-top: 10px;">
+              <span class="term-prompt">$</span> bugrock status
+            </div>
+            <div class="term-output pink">[UWP HOOK]: BYPASSED
+[ISOLATION]: ACTIVE (%localappdata%/BUGrock)
+[INSTANCES]: 4 INSTALLED (1.21.40, 1.20.80, 1.16.201, 1.14.60)
+[TELEMETRY]: 0 PACKETS SENT TO MS</div>
+
+            <div class="term-line" style="margin-top: 10px;">
+              <span class="term-prompt">$</span> Type 'help' or click a command below:
+            </div>
+          </div>
+
+          <div class="quick-chips">
+            <span class="chip-cmd" data-cmd="help">help</span>
+            <span class="chip-cmd" data-cmd="versions">versions</span>
+            <span class="chip-cmd" data-cmd="launch 1.21.40">launch 1.21.40</span>
+            <span class="chip-cmd" data-cmd="shaders">shaders</span>
+            <span class="chip-cmd" data-cmd="clear">clear</span>
+          </div>
+
+          <div class="term-input-row">
+            <span class="term-prompt">&gt;</span>
+            <input type="text" id="term-input" placeholder="type command (e.g. launch, versions, help)..." autocomplete="off" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagnostics Bento Grid -->
+    <section class="bento-grid">
+      <div class="bento-item">
+        <div class="bento-num">01</div>
+        <div class="bento-title">ZERO TELEMETRY</div>
+        <div class="bento-desc">
+          Windows Store analytics, telemetry sinks, and unnecessary background polling loops are completely severed at socket level.
+        </div>
+      </div>
+
+      <div class="bento-item">
+        <div class="bento-num">02</div>
+        <div class="bento-title">SIDE-BY-SIDE SANDBOX</div>
+        <div class="bento-desc">
+          Run 1.21 release while simultaneously compiling or playing on 1.16 speedrun instances. Zero save file collisions.
+        </div>
+      </div>
+
+      <div class="bento-item">
+        <div class="bento-num">03</div>
+        <div class="bento-title">PORTABLE RUNTIME</div>
+        <div class="bento-desc">
+          Extract onto any USB drive. Take your entire Bedrock world collection, packs, and accounts anywhere without needing admin rights.
+        </div>
+      </div>
+
+      <div class="bento-item">
+        <div class="bento-num">04</div>
+        <div class="bento-title">SHADER HOT-LOADER</div>
+        <div class="bento-desc">
+          Direct injection of custom RenderDragon materials and Deferred Lighting assets without manually editing system manifest files.
+        </div>
+      </div>
+    </section>
+
+    <!-- Benchmarks Section -->
+    <section id="benchmarks" class="benchmarks-section">
+      <div class="section-head">
+        <div class="head-tag">// 03 PERFORMANCE COMPARISON</div>
+        <h2 class="head-title">SYSTEM RESOURCE CONSUMPTION</h2>
+      </div>
+
+      <div class="stat-bars-container">
+        <!-- RAM -->
+        <div class="stat-bar-group">
+          <div class="stat-label-row">
+            <span>MEMORY CONSUMPTION (IDLE)</span>
+            <span>BUGrock: 18.4 MB vs Store Launcher: 420 MB</span>
+          </div>
+          <div class="stat-track" style="margin-bottom: 6px;">
+            <div class="stat-fill-lime" style="width: 12%;">BUGrock: 18.4 MB</div>
+          </div>
+          <div class="stat-track">
+            <div class="stat-fill-red" style="width: 88%;">Official Store Launcher: 420 MB</div>
+          </div>
+        </div>
+
+        <!-- Launch speed -->
+        <div class="stat-bar-group">
+          <div class="stat-label-row">
+            <span>COLD LAUNCH TIME</span>
+            <span>BUGrock: 1.12s vs Store Launcher: 7.80s</span>
+          </div>
+          <div class="stat-track" style="margin-bottom: 6px;">
+            <div class="stat-fill-lime" style="width: 14%;">BUGrock: 1.12s</div>
+          </div>
+          <div class="stat-track">
+            <div class="stat-fill-red" style="width: 78%;">Official Store Launcher: 7.80s</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="brutal-footer container">
+    <div class="footer-content">
+      <div>
+        <strong>BUGrock Terminal</strong> — Forged for Minecraft Bedrock power users.
+      </div>
+      <div>
+        MIT License • Free & Open Source
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Copy script button
+    document.getElementById('copy-script-btn').addEventListener('click', () => {
+      const text = document.getElementById('cmd-script').innerText;
+      navigator.clipboard.writeText(text);
+      const btn = document.getElementById('copy-script-btn');
+      btn.innerText = 'COPIED!';
+      btn.style.borderColor = '#86FF00';
+      btn.style.color = '#86FF00';
+      setTimeout(() => {
+        btn.innerText = 'COPY CMD';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+
+    // Terminal logic
+    const termScreen = document.getElementById('term-screen');
+    const termInput = document.getElementById('term-input');
+
+    function appendTerm(prompt, text, isPink = false) {
+      const line = document.createElement('div');
+      line.className = 'term-line';
+      line.style.marginTop = '8px';
+      line.innerHTML = `<span class="term-prompt">$</span> ${prompt}`;
+      termScreen.appendChild(line);
+
+      if (text) {
+        const out = document.createElement('div');
+        out.className = isPink ? 'term-output pink' : 'term-output';
+        out.textContent = text;
+        termScreen.appendChild(out);
+      }
+      termScreen.scrollTop = termScreen.scrollHeight;
+    }
+
+    function handleCommand(cmd) {
+      cmd = cmd.trim();
+      if (!cmd) return;
+
+      if (cmd === 'clear') {
+        termScreen.innerHTML = '';
+        return;
+      }
+      if (cmd === 'help') {
+        appendTerm(cmd, `Available commands:
+  - versions       : list all installed & remote versions
+  - launch <ver>   : simulate sandbox launch (e.g. launch 1.21.40)
+  - shaders        : inspect RenderDragon deferred shader pipeline
+  - status         : view sandbox isolation and telemetry state
+  - clear          : clear the terminal screen`);
+      } else if (cmd === 'versions') {
+        appendTerm(cmd, `[LOCAL INSTANCES]:
+  * 1.21.40 (Tricky Trials - Release) [ACTIVE]
+  * 1.21.50.20 (Preview Channel)
+  * 1.20.80 (Trails & Tales)
+  * 1.16.201 (Nether Edition)`);
+      } else if (cmd.startsWith('launch')) {
+        appendTerm(cmd, `[BOOT]: Allocating isolated UWP container...
+[BOOT]: Registering package manifest...
+[BOOT]: Disabling MS telemetry hooks...
+[BOOT]: SUCCESS! Minecraft Bedrock is running (PID 9104).`, true);
+      } else if (cmd === 'shaders') {
+        appendTerm(cmd, `RenderDragon Pipeline Status:
+  - Deferred Lighting: ENABLED
+  - Sub-surface Scattering: READY
+  - Ray-query Fallback: OK`);
+      } else if (cmd === 'status') {
+        appendTerm(cmd, `SANDBOX HEALTH: 100% NOMINAL
+TELEMETRY: BLOCKED (0 bytes sent)
+MEMORY: 18.4 MB (Native C++ & Rust core)`);
+      } else {
+        appendTerm(cmd, `Unknown command: '${cmd}'. Type 'help' for available commands.`);
+      }
+    }
+
+    termInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleCommand(termInput.value);
+        termInput.value = '';
+      }
+    });
+
+    document.querySelectorAll('.chip-cmd').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const cmd = chip.getAttribute('data-cmd');
+        handleCommand(cmd);
+      });
+    });
+  </script>
+</body>
+</html>
